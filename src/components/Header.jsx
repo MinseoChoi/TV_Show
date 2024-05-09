@@ -1,17 +1,24 @@
 import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 import SearchBox from "./SearchBox";
 
 const Header = () => {
+    const navigate = useNavigate();
+    const handleMainClick = () => {
+        navigate('/');
+    };
+
     return (
         <AppHeader>
             <Navibar>
-                <Home>
+                <Home onClick={handleMainClick}>
                     Min's Show
                 </Home>
                 <HomeLogo
                     src={process.env.PUBLIC_URL + '/assets/logo.svg'}
                     alt='로고'
+                    onClick={handleMainClick}
                 />
                 <Menubar>
                     <p>All Shows</p>
