@@ -28,7 +28,7 @@ const Main = () => {
                 <Loader />
             ) : (
                 <ShowContainer>
-                    <List>✨ LATEST SHOW</List>
+                    <List>✨ LATEST SHOWS</List>
                     <ShowCarousel>
                         latest show list ...
                     </ShowCarousel>
@@ -43,7 +43,7 @@ const Main = () => {
                         genre 2 show list ...
                     </ShowCarousel>
                     <hr />
-                    <List>📺 ALL SHOW</List>
+                    <List>📺 ALL SHOWS</List>
                     <ShowCarousel>
                         {shows.map(show => (
                             <Show key={show.id} onClick={() => handleShowClick(show.id)}>

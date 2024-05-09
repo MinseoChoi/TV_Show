@@ -10,7 +10,16 @@ const Header = () => {
     const navigate = useNavigate();
     const handleMainClick = () => {
         navigate('/');
+        setMenu(false);
     };
+    const handleMenuClick = (name) => {
+        navigate(`${name}`);
+        setMenu(false);
+    };
+
+    useEffect(() => {
+        setMenu(false);
+    }, []);
 
     const toggleMenu = () => {
         setMenu(!menu);
@@ -28,7 +37,7 @@ const Header = () => {
                     onClick={handleMainClick}
                 />
                 <Menubar>
-                    <p>All Shows</p>
+                    <p onClick={() => handleMenuClick('all')}>All Shows</p>
                     <p>Latest</p>
                     <p>By Genre</p>
                     <p>Favorite</p>

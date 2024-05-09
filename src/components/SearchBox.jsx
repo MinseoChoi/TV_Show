@@ -50,7 +50,7 @@ const Search = styled.div`
     @media screen and (min-width: 501px) {
         display: flex;
         position: relative;
-        width: 100%;
+        width: calc(5rem + 15vw);
         height: 30%;
         margin: 1.5rem;
         background-color: white;
@@ -71,7 +71,7 @@ const Search = styled.div`
         }
 
         &.open {
-            width: 80%;
+            width: calc(5rem + 10vw);
             background: white;
             border: 1.5px solid white;
             border-radius: 8px;
@@ -123,9 +123,9 @@ const SearchWrapper = styled.ul`
     @media screen and (min-width: 501px) {
         position: absolute;
         z-index: 99;
-        width: 30%;
-        top: 35px;
-        right: 1rem;
+        width: calc(5rem + 15vw);
+        top: 40px;
+        right: 1.5rem;
         height: fit-content;
         border-radius: 0.5rem;
         border: 1px solid darkgray;
@@ -147,8 +147,8 @@ const SearchWrapper = styled.ul`
     @media screen and (max-width: 500px) {
         position: absolute;
         z-index: 99;
-        width: 26.5%;
-        top: 35px;
+        width: calc(5rem + 10vw);
+        top: 40px;
         right: 4.5rem;
         height: fit-content;
         border-radius: 0.5rem;
