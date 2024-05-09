@@ -1,17 +1,45 @@
 import { styled } from "styled-components";
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
+
+const apiURL = 'https://api.tvmaze.com/search/shows?q=';
 
 const SearchBox = () => {
+    const [click, setClick] = useState(false);
+    const [keyword, setKeyword] = useState('')
+    const [searchresult, setSearchresult] = useState([]);
+
+    const onChangeKeyword = e => {
+        setKeyword(e.target.value);
+        
+        fetch(`${apiURL}${e.target.value}`)
+        .then(response => response.json())
+        .then(json => setSearchresult(json));
+    };
+
+    const navigate = useNavigate();
+    const handleShowClick = (id) => {
+        navigate(`/show/${id}`);
+        setKeyword('');
+    };
+
     return (
         <>
             <Search className='labtop'>
                 <SearchImg src={process.env.PUBLIC_URL + '/assets/searchBlack.svg'} alt="검색" />
-                <SearchInput placeholder="영화 이름을 입력해주세요." />
+                <SearchInput placeholder="영화 이름을 입력해주세요." value={keyword} onChange={onChangeKeyword} />
             </Search>
-            <Search className={'mobile open'}>
-                <SearchIcon src={process.env.PUBLIC_URL + '/assets/searchWhite.svg'} alt="검색" />
-                <SearchInput placeholder="영화 이름을 입력해주세요." />
+            <Search className={'mobile' + (click ? ' open' : ' close')}>
+                <SearchIcon src={process.env.PUBLIC_URL + '/assets/searchWhite.svg'} onClick={() => setClick(!click)} alt="검색" />
+                <SearchInput placeholder="영화 이름을 입력해주세요." value={keyword} className={click ? 'open' : 'close'} onChange={onChangeKeyword} />
             </Search>
+            {keyword && (
+                <SearchWrapper>
+                    {searchresult && searchresult.map(result =>
+                        <li key={result.show.id} onClick={() => handleShowClick(result.show.id)}>{result.show.name}</li>
+                    )}
+                </SearchWrapper>
+            )}
         </>
     )
 };
@@ -88,5 +116,55 @@ const SearchInput = styled.input`
 
     &.close {
         display: none;
+    }
+`;
+
+const SearchWrapper = styled.ul`
+    @media screen and (min-width: 501px) {
+        position: absolute;
+        z-index: 99;
+        width: 30%;
+        top: 35px;
+        right: 1rem;
+        height: fit-content;
+        border-radius: 0.5rem;
+        border: 1px solid darkgray;
+        padding: 0.5rem 0.5rem;
+        background: white;
+        list-style: none;
+        box-sizing: border-box;
+        line-height: 160%;
+        font-size: calc(0.3rem + 0.8vw);
+
+        li {
+            &:hover {
+                cursor: pointer;
+                font-weight: bold;
+            }
+        }
+    }
+
+    @media screen and (max-width: 500px) {
+        position: absolute;
+        z-index: 99;
+        width: 26.5%;
+        top: 35px;
+        right: 4.5rem;
+        height: fit-content;
+        border-radius: 0.5rem;
+        border: 1px solid darkgray;
+        padding: 0.5rem 0.5rem;
+        background: white;
+        list-style: none;
+        box-sizing: border-box;
+        line-height: 160%;
+        font-size: calc(0.3rem + 0.8vw);
+
+        li {
+            &:hover {
+                cursor: pointer;
+                font-weight: bold;
+            }
+        }
     }
 `;
