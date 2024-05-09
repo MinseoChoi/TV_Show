@@ -11,7 +11,7 @@ function App() {
         <Header />
         <Routes>
           <Route index element={<Main />}></Route>
-          <Route path="/show" element={<ShowDetail />}></Route>
+          <Route path="/show/:id" element={<ShowDetail />}></Route>
         </Routes>
       </AppContainer>
     </BrowserRouter>

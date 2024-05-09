@@ -1,8 +1,10 @@
 import styled from 'styled-components';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../components/Loader';
 
 const Main = () => {
+    const [loading, setLoading] = useState(true);
     const [shows, setShows] = useState([]);
 
     useEffect(() => {
@@ -11,46 +13,52 @@ const Main = () => {
         .then(json => {
             setShows(json);
         });
+
+        setTimeout(() => setLoading(false), 1500);
     }, []);
 
     const navigate = useNavigate();
-    const handleShowClick = () => {
-        navigate('/show');
+    const handleShowClick = (id) => {
+        navigate(`/show/${id}`);
     };
 
     return (
         <MainContainer>
-            <ShowContainer>
-                <List>✨ LATEST SHOW</List>
-                <ShowCarousel>
-                    latest show list ...
-                </ShowCarousel>
-                <hr />
-                <List>GENRE1 SHOW</List>
-                <ShowCarousel>
-                    genre 1 show list ...
-                </ShowCarousel>
-                <hr />
-                <List>GENRE2 SHOW</List>
-                <ShowCarousel>
-                    genre 2 show list ...
-                </ShowCarousel>
-                <hr />
-                <List>📺 ALL SHOW</List>
-                <ShowCarousel>
-                    {shows.map(show => (
-                        <Show key={show.id} onClick={() => handleShowClick()}>
-                            <Image src={show.image.original} />
-                            <ShowContent>
-                                <ShowName>{show.name}</ShowName>
-                                {show.rating.average && 
-                                    <Detail>⭐ {show.rating.average}점</Detail>
-                                }
-                            </ShowContent>
-                        </Show>
-                    ))}
-                </ShowCarousel>
-            </ShowContainer>
+            {loading ? (
+                <Loader />
+            ) : (
+                <ShowContainer>
+                    <List>✨ LATEST SHOW</List>
+                    <ShowCarousel>
+                        latest show list ...
+                    </ShowCarousel>
+                    <hr />
+                    <List>GENRE1 SHOW</List>
+                    <ShowCarousel>
+                        genre 1 show list ...
+                    </ShowCarousel>
+                    <hr />
+                    <List>GENRE2 SHOW</List>
+                    <ShowCarousel>
+                        genre 2 show list ...
+                    </ShowCarousel>
+                    <hr />
+                    <List>📺 ALL SHOW</List>
+                    <ShowCarousel>
+                        {shows.map(show => (
+                            <Show key={show.id} onClick={() => handleShowClick(show.id)}>
+                                <Image src={show.image.original} />
+                                <ShowContent>
+                                    <ShowName>{show.name}</ShowName>
+                                    {show.rating.average && 
+                                        <Detail>⭐ {show.rating.average}점</Detail>
+                                    }
+                                </ShowContent>
+                            </Show>
+                        ))}
+                    </ShowCarousel>
+                </ShowContainer>
+            )}
         </MainContainer>
     );
 };

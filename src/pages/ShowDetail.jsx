@@ -1,26 +1,61 @@
 import styled from 'styled-components';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import Loader from '../components/Loader';
 
 const ShowDetail = () => {
+    const params = useParams();
+
+    const [loading, setLoading] = useState(true);
+    const [show, setShow] = useState({});
+
+    useEffect(() => {
+        fetch(`https://api.tvmaze.com/shows/${params.id}`)
+        .then(response => response.json())
+        .then(json => setShow(json));
+
+        setTimeout(() => setLoading(false), 1500);
+    }, []);
+
+    const removeTag = (text) => {
+        return text.replace(/(<([^>]+)>)/gi, '');
+    };
+
     return (
         <ShowContainer>
-            <ShowWrapper>
-                <Show>
-                    <Image src={process.env.PUBLIC_URL + '/assets/imageError.svg'} width='28%' height='41vw' />
-                    <ShowContent width='72%' height='41vw'>
-                        <ShowName rem={0.7}>
-                            SHOW NAME
-                        </ShowName>
-                        <GenreGroup>
-                                GENRE
+            {loading ? (
+                <Loader />
+            ) : (
+                <ShowWrapper>
+                    <Show>
+                        <Image src={show.image?.original} width='28%' height='41vw' />
+                        <ShowContent width='72%' height='41vw'>
+                            <ShowName rem={0.7}>
+                                {show.name}
+                            </ShowName>
+                            <GenreGroup>
+                                {show.genres.map((genre, index) => (
+                                    <Genre key={index}>{genre} </Genre>
+                                ))}
                             </GenreGroup>
-                        <Detail>
-                            RATING / AVERAGE RUNTIME
-                        </Detail>
-                        <Summary size='0.3rem + 1vw'>SUMMARY</Summary>
-                    </ShowContent>
-                </Show>
-            </ShowWrapper>
+                            <Detail>
+                                {show.rating.average && 
+                                    (
+                                        <>
+                                            <Detail>⭐ {show.rating.average}점</Detail>
+                                            <span> / </span>
+                                        </>
+                                    )
+                                }
+                                <Detail>평균 {show.averageRuntime}분</Detail>
+                            </Detail>
+                            {show.summary &&
+                                <Summary size='0.3rem + 1vw'>{removeTag(show.summary)}</Summary>
+                            }
+                        </ShowContent>
+                    </Show>
+                </ShowWrapper>
+            )}
         </ShowContainer>
     );
 };
@@ -105,6 +140,12 @@ const GenreGroup = styled.div`
     gap: 0.3rem;
     font-size: calc(0.1rem + 0.8vw);
     margin: 0;
+`;
+
+const Genre = styled.p`
+    padding: 0.3rem;
+    border: 1px solid white;
+    border-radius: 20px;
 `;
 
 const Detail = styled.span`
