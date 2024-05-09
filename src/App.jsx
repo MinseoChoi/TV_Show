@@ -1,7 +1,8 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import styled from 'styled-components';
 import Header from './components/Header';
 import Main from './pages/Main';
-import styled from 'styled-components';
+import ShowDetail from './pages/ShowDetail';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Header />
         <Routes>
           <Route index element={<Main />}></Route>
+          <Route path="/show" element={<ShowDetail />}></Route>
         </Routes>
       </AppContainer>
     </BrowserRouter>

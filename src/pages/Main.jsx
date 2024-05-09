@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Main = () => {
     const [shows, setShows] = useState([]);
@@ -11,6 +12,11 @@ const Main = () => {
             setShows(json);
         });
     }, []);
+
+    const navigate = useNavigate();
+    const handleShowClick = () => {
+        navigate('/show');
+    };
 
     return (
         <MainContainer>
@@ -33,7 +39,7 @@ const Main = () => {
                 <List>📺 ALL SHOW</List>
                 <ShowCarousel>
                     {shows.map(show => (
-                        <Show key={show.id}>
+                        <Show key={show.id} onClick={() => handleShowClick()}>
                             <Image src={show.image.original} />
                             <ShowContent>
                                 <ShowName>{show.name}</ShowName>

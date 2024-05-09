@@ -2,11 +2,18 @@ import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 import SearchBox from "./SearchBox";
+import Sidebar from './Sidebar';
 
 const Header = () => {
+    const [menu, setMenu] = useState(false);
+
     const navigate = useNavigate();
     const handleMainClick = () => {
         navigate('/');
+    };
+
+    const toggleMenu = () => {
+        setMenu(!menu);
     };
 
     return (
@@ -32,7 +39,9 @@ const Header = () => {
                 <Menu 
                     src={process.env.PUBLIC_URL + '/assets/list.svg'} 
                     alt='메뉴' 
+                    onClick={toggleMenu}
                 />
+                <Sidebar menu={menu} setMenu={setMenu} />
             </Navibar>
         </AppHeader>
     );
