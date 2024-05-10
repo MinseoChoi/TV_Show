@@ -11,29 +11,36 @@ const Main = () => {
     const randomGenre = [];
 
     useEffect(() => {
-        fetch('https://api.tvmaze.com/shows')
-        .then(response => response.json())
-        .then(json => {
-            setShows(json);
+        const fetchData = async () => {
+            try {
+                setLoading(true);
 
-            const genL = [];
-            json.map(show =>
-                show.genres.map(genre =>
-                    genL.push(genre)
-                )    
-            );
-            setGenreList([...new Set(genL)]); // 중복 제거
+                await fetch('https://api.tvmaze.com/shows')
+                .then(response => response.json())
+                .then(json => {
+                    setShows(json);
 
-            for (let i = 0; i < 2; i++) {
-                randomGenre.push(parseInt(Math.random() * [...new Set(genL)].length));
+                    const genL = [];
+                    json.map(show =>
+                        show.genres.map(genre =>
+                            genL.push(genre)
+                        )
+                    );
+                    setGenreList([...new Set(genL)]);
+                });
+
+                await fetch('https://api.tvmaze.com/schedule/full')
+                .then(response => response.json())
+                .then(json => setLatest(json.slice(0, 50)));
+
+                setLoading(false);
+            } catch (e) {
+                console.error('Error fetching data: ', e);
+                setLoading(false);
             }
-        });
+        };
 
-        fetch('https://api.tvmaze.com/schedule/full')
-        .then(response => response.json())
-        .then(json => setLatest(json.slice(0, 50)));
-
-        setTimeout(() => setLoading(false), 1500);
+        fetchData();
     }, []);
 
     const getRandom = () => parseInt(Math.random() * genreList.length);
@@ -120,7 +127,8 @@ const Main = () => {
 export default Main;
 
 const MainContainer = styled.div`
-    margin: 0;   
+    position: relative;
+    margin: calc(4rem + 0.5vw) 0 0 0;
     padding: 0.5rem;
     min-height: 100vh;;
     background: linear-gradient(to bottom, #085467, #AFA7BB, #F4C0B3);

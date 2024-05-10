@@ -61,7 +61,7 @@ const Header = () => {
 export default Header;
 
 const AppHeader = styled.header`
-    position: sticky;
+    position: fixed;
     display: flex;
     justify-content: space-between;
     align-items: center;

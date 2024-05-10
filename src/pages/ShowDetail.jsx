@@ -13,28 +13,46 @@ const ShowDetail = () => {
     const [season, setSeason] = useState([]);
     const [episodes, setEpisodes] = useState([]);
     const [click, setClick] = useState('');
+    const [like, setLike] = useState(false);
 
     const [isExpand, setIsExpand] = useState(false);
     const [selected, setSelected] = useState(1);
 
     useEffect(() => {
-        fetch(`https://api.tvmaze.com/shows/${params.id}`)
-        .then(response => response.json())
-        .then(json => setShow(json));
+        const fetchData = async () => {
+            try {
+                setLoading(true);
 
-        fetch(`https://api.tvmaze.com/shows/${params.id}/seasons`)
-        .then(response => response.json())
-        .then(json => setSeason(json));
+                await fetch(`https://api.tvmaze.com/shows/${params.id}`)
+                .then(response => response.json())
+                .then(json => setShow(json));
 
-        fetch(`https://api.tvmaze.com/shows/${params.id}/cast`)
-        .then(response => response.json())
-        .then(json => setCast(json));
+                await fetch(`https://api.tvmaze.com/shows/${params.id}/seasons`)
+                .then(response => response.json())
+                .then(json => setSeason(json));
 
-        fetch(`https://api.tvmaze.com/shows/${params.id}/episodes`)
-        .then(response => response.json())
-        .then(json => setEpisodes(json));
+                await fetch(`https://api.tvmaze.com/shows/${params.id}/cast`)
+                .then(response => response.json())
+                .then(json => setCast(json));
 
-        setTimeout(() => setLoading(false), 1500);
+                await fetch(`https://api.tvmaze.com/shows/${params.id}/episodes`)
+                .then(response => response.json())
+                .then(json => setEpisodes(json));
+
+                const data = localStorage.getItem('favorite');
+                const list = JSON.parse(data);
+                if (list && list.filter(l => l.id == params.id).length === 1) {
+                    setLike(true);
+                }
+
+                setLoading(false);
+            } catch (e) {
+                console.error('Error fetching data: ', e);
+                setLoading(false);
+            }
+        };
+
+        fetchData();
     }, [params.id]);
 
     const removeTag = (text) => {
@@ -97,6 +115,31 @@ const ShowDetail = () => {
         else setClick(index);
     };
 
+    const onSave = (show) => {
+        const data = localStorage.getItem('favorite');
+        const list = [];
+
+        if (!like) {
+            if (data) {
+                list.push(...JSON.parse(data), show);
+            } else {
+                list.push(show);
+            }
+            localStorage.setItem('favorite', JSON.stringify(list));
+        } else {
+            const origin = JSON.parse(data);
+            const newlist = origin.filter(data => data.id != show.id);
+            if (newlist) {
+                if (newlist.length > 0) {
+                    localStorage.setItem('favorite', JSON.stringify(newlist));
+                } else {
+                    localStorage.removeItem('favorite');
+                }
+            }
+        }
+        setLike(!like);
+    };
+
     return (
         <ShowContainer>
             {loading ? (
@@ -104,10 +147,14 @@ const ShowDetail = () => {
             ) : (
                 <ShowWrapper>
                     <Show>
-                        <Image src={show.image?.original} className='poster' />
+                        <Image src={season[selected - 1].image?.original ? season[selected - 1].image?.original : show.image?.original} className='poster' />
                         <ShowContent className='poster'>
                             <ShowName size='0.7rem + 1vw'>
                                 {show.name}
+                                <label htmlFor="checkbox">
+                                    <input type="checkbox" id="checkbox" className={like ? 'fullheart' : 'emptyheart'} onClick={() => onSave(show)} hidden />
+                                    <svg t="1689815540548" className="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2271"><path d="M742.4 101.12A249.6 249.6 0 0 0 512 256a249.6 249.6 0 0 0-230.72-154.88C143.68 101.12 32 238.4 32 376.32c0 301.44 416 546.56 480 546.56s480-245.12 480-546.56c0-137.92-111.68-275.2-249.6-275.2z" fill="#231F20" p-id="2272" id="heart"></path></svg>
+                                </label>
                             </ShowName>
                             <GenreGroup>
                                 {show.genres.map((genre, index) => (
@@ -201,11 +248,10 @@ const ShowDetail = () => {
 export default ShowDetail;
 
 const ShowContainer = styled.div`
-    height: fit-content;
-    margin: 0;
+    margin: calc(4rem + 0.5vw) 0 0 0;
     padding: 0;
     width: 100%;
-    min-height: 100vh;
+    min-heigiht: 100vh;
     background: linear-gradient(to bottom, #085467, #AFA7BB, #F4C0B3);
     color: white;
 `;
@@ -333,6 +379,63 @@ const ShowName = styled.p`
     display: flex;
     align-items: center;
     gap: 10px;
+
+    svg {
+        width: calc(0.6rem + 1vw);
+        position: relative;
+    }
+
+    #heart {
+        fill: #eee;
+
+        stroke: #ff6b81;
+        stroke-width: 20px;
+        stroke-dasharray: 3000;
+        stroke-dashoffset: 3000;
+        stroke-linecap: round;
+    }
+
+    .fullheart + svg #heart {
+        animation: drawHeart 1s linear forwards;
+    }
+
+    .fullheart + svg {
+        animation: beat 1s linear forwards;
+    }
+
+    label {
+        cursor: pointer;
+        margin: 5px;
+    }
+
+    @keyframes drawHeart {
+        0% {
+            stroke-dashoffset: 2600;
+        }
+        80% {
+            fill: #eee;
+            stroke-dashoffset: 0;
+        }
+        100% {
+            fill: #ff6b81;
+            stroke-dashoffset: 0;
+        }
+    }
+
+    @keyframes beat {
+        0%{
+            transform: scale(1);
+        }
+        70%{
+            transform: scale(1);
+        }
+        80%{
+            transform: scale(1.2);
+        }
+        100%{
+            transform: scale(1);
+        }
+    }
 `;
 
 const GenreGroup = styled.div`
@@ -439,6 +542,7 @@ const ActorCarousel = styled.div`
 const Episodes = styled.div`
     position: relative;
     width: 100%;
+    height: fit-content;
     margin: 0;
 `;
 
@@ -446,7 +550,8 @@ const EpisodeWrapper = styled.div`
     display: flex;
     flex-direction: column;
     position: relative;
-    margin: 0.5rem;
+    margin: 0;
+    padding: 1rem 1rem 0 1rem;
     
     overflow-x: auto;
     overflow-y: hidden;
@@ -462,7 +567,8 @@ const Episode = styled.div`
     position: relative;
     display: flex;
     flex-direction: row;
-    margin: 10px;
+    margin: 0;
+    padding: 0 0 1rem 0;
     gap: 0.5rem;
 `;
 
@@ -470,7 +576,7 @@ const Season = styled.div`
     display: block;
     position: relative;
     width: calc(6rem + 1vw);
-    margin: 0.5rem 0 0.5rem 1rem;
+    margin: 0.3rem 0 0 1rem;
     font-size: calc(0.6rem + 0.5vw);
 
     div {
@@ -493,7 +599,6 @@ const Select = styled.select`
     color: inherit;
     box-sizing: content-box;
     margin: 0;
-    width: 120px;
     border-radius: 0.5rem;
     padding: 0.75rem 2.5rem 0.65rem 0.75rem;
     box-shadow: none;
@@ -511,7 +616,7 @@ const UL = styled.ul`
     top: 1rem;
     margin-top: 1.7rem;
     border-radius: 0.5rem;
-    border: 2px solid black;
+    border: 2px solid #085467;
     padding: 0.5rem 0.5rem;
     background: white;
     list-style: none;
@@ -537,7 +642,7 @@ const UL = styled.ul`
         }
 
         &.selected {
-            background: #000;
+            background: #085467;
             color: #fff;
         }
     }
@@ -546,7 +651,7 @@ const UL = styled.ul`
 const Arrow = styled.span`
     width: 20px;
     height: 20px;
-    background: #000;
+    background: #085467;
     display: block;
     position: absolute;
     right: 0.5rem;

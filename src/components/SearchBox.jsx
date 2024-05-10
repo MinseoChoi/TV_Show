@@ -9,12 +9,31 @@ const SearchBox = () => {
     const [keyword, setKeyword] = useState('')
     const [searchresult, setSearchresult] = useState([]);
 
+    useEffect(() => {
+        if (!click) setKeyword('');
+    }, [click]);
+
+    useEffect(() => {
+        if (keyword.trim() === '') {
+            setSearchresult([]);
+            return;
+        }
+
+        const fetchData = async () => {
+            try {
+                await fetch(`${apiURL}${keyword}`)
+                .then(response => response.json())
+                .then(json => setSearchresult(json));
+            } catch (e) {
+                console.error('Error fetching data: ', e);
+            }
+        };
+
+        fetchData();
+    }, [keyword]);
+
     const onChangeKeyword = e => {
         setKeyword(e.target.value);
-        
-        fetch(`${apiURL}${e.target.value}`)
-        .then(response => response.json())
-        .then(json => setSearchresult(json));
     };
 
     const navigate = useNavigate();
@@ -35,7 +54,7 @@ const SearchBox = () => {
             </Search>
             {keyword && (
                 <SearchWrapper>
-                    {searchresult && searchresult.map(result =>
+                    {searchresult.map(result =>
                         <li key={result.show.id} onClick={() => handleShowClick(result.show.id)}>{result.show.name}</li>
                     )}
                 </SearchWrapper>
@@ -71,18 +90,18 @@ const Search = styled.div`
         }
 
         &.open {
-            width: calc(5rem + 10vw);
+            width: calc(4rem + 15vw);
             background: white;
             border: 1.5px solid white;
             border-radius: 8px;
-            transition: width 0.2s ease-out;
+            transition: width 0.5s;
         }
         &.close {
             width: 20%;
             padding: 2px;
             border: 1.5px solid white;
             border-radius: 50%;
-            transition: width 0.2s ease-out;
+            transition: width 0.5s ease;
         }
     }
 `;
@@ -113,9 +132,15 @@ const SearchInput = styled.input`
     outline: none;
     background-color: transparent;
     font-size: calc(0.3rem + 0.8vw);
+    transition: width 0.5s ease, opacity 0.3s ease;
 
+    &.open {
+        width: calc(3rem + 15vw);
+        opacity: 1;
+    }
     &.close {
-        display: none;
+        width: 0;
+        opacity: 0;
     }
 `;
 
@@ -147,7 +172,7 @@ const SearchWrapper = styled.ul`
     @media screen and (max-width: 500px) {
         position: absolute;
         z-index: 99;
-        width: calc(5rem + 10vw);
+        width: calc(4.2rem + 15vw);
         top: 40px;
         right: 4.5rem;
         height: fit-content;

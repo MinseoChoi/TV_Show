@@ -10,17 +10,28 @@ const ShowList = () => {
     const [shows, setShows] = useState([]);
 
     useEffect(() => {
-        if (location.pathname === '/all') {
-            fetch('https://api.tvmaze.com/shows')
-            .then(response => response.json())
-            .then(json => setShows(json));
-        } else if (location.pathname === '/latest') {
-            fetch('https://api.tvmaze.com/schedule/full')
-            .then(response => response.json())
-            .then(json => setShows(json));
-        }
+        const fetchData = async () => {
+            try {
+                setLoading(true);
 
-        setTimeout(() => setLoading(false), 1500);
+                if (location.pathname === '/all') {
+                    await fetch('https://api.tvmaze.com/shows')
+                    .then(response => response.json())
+                    .then(json => setShows(json));
+                } else if (location.pathname === '/latest') {
+                    await fetch('https://api.tvmaze.com/schedule/full')
+                    .then(response => response.json())
+                    .then(json => setShows(json));
+                }
+
+                setLoading(false);
+            } catch (e) {
+                console.error('Error fetching data: ', e);
+                setLoading(false);
+            }
+        };
+
+        fetchData();
     }, []);
 
     const navigate = useNavigate();
@@ -57,7 +68,7 @@ const MainContainer = styled.div`
     @media screen and (min-width: 501px) {
         padding: 0.6rem;
         min-height: calc(${($minheight) => $minheight}px - (7.2rem + 1vw));
-        margin: 0;
+        margin: calc(4rem + 0.5vw) 0 0 0;
         background: linear-gradient(to bottom, #085467, #AFA7BB, #F4C0B3);
         color: white;
     }
@@ -65,7 +76,7 @@ const MainContainer = styled.div`
     @media screen and (max-width: 500px) {
         padding: 0.6rem;
         min-height: calc(${($minheight) => $minheight}px - (7.3rem + 1vw));
-        margin: 0;
+        margin: calc(4rem + 0.5vw) 0 0 0;
         background: linear-gradient(to bottom, #085467, #AFA7BB, #F4C0B3);
         color: white;
     }

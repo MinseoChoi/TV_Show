@@ -9,20 +9,31 @@ const ByGenre = () => {
     const [genreList, setGenreList] = useState([]);
 
     useEffect(() => {
-        fetch('https:/api.tvmaze.com/shows')
-        .then(response => response.json())
-        .then(json => {
-            setShows(json);
+        const fetchData = async () => {
+            try {
+                setLoading(true);
 
-            const genL = [];
-            json.map(show => show.genres.map(genre =>
-                genL.push(genre)
-                )
-            );
-            setGenreList([...new Set(genL)]); // 중복 제거
-        });
+                await fetch('https:/api.tvmaze.com/shows')
+                .then(response => response.json())
+                .then(json => {
+                    setShows(json);
+        
+                    const genL = [];
+                    json.map(show => show.genres.map(genre =>
+                        genL.push(genre)
+                        )
+                    );
+                    setGenreList([...new Set(genL)]); // 중복 제거
+                });
 
-        setTimeout(() => setLoading(false), 1500);
+                setLoading(false);
+            } catch (e) {
+                console.error('Error fetching data: ', e);
+                setLoading(false);
+            }
+        };
+
+        fetchData();
     }, []);
 
     const navigate = useNavigate();
@@ -66,7 +77,7 @@ const ByGenre = () => {
 export default ByGenre;
 
 const MainContainer = styled.div`
-    margin: 0;
+    margin: calc(4rem + 0.5vw) 0 0 0;
     padding: 0.5rem;
     min-heigiht: 100vh;
     background: linear-gradient(to bottom, #085467, #AFA7BB, #F4C0B3);

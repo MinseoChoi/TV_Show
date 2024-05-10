@@ -28,33 +28,25 @@ const ControlBox = styled.div`
     }
 
     @media screen and (max-width: 500px) {
-        &.open {
-            display: flex;
-            flex-direction: column;
-            position: absolute;
-            top: calc(3.5rem + 1vw);
-            right: 0;
-            padding: 0.2rem;
-            width: 120px;
-            background: #085467;
-            color: white;
-            text-align: center;
-            font-size: calc(0.8rem + 0.5vw);
-            border-radius: 0 0 0 20%;
-            animation: open 1s linear 1;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: calc(3.5rem + 1vw);
+        padding: 0.2rem;
+        width: 8rem;
+        background: #085467;
+        color: white;
+        text-align: center;
+        font-size: calc(0.8rem + 0.5vw);
+        border-radius: 0 0 0 20%;
+        transition: right 0.5s ease-out;
 
-            @keyframes open {
-                0% {
-                    transform: translateX(120px);
-                }
-                100% {
-                    transform: translateX(0);
-                }
-            }
+        &.open {
+            right: 0;
         }
 
         &.close {
-            display: none;
+            right: -8.5rem;
         }
     }
 `;
