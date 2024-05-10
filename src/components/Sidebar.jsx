@@ -14,7 +14,7 @@ const Sidebar = ({menu, setMenu}) => {
             <List>Popular</List>
             <List onClick={() => handleMenuClick('all')}>All Shows</List>
             <List onClick={() => handleMenuClick('latest')}>Latest</List>
-            <List>By Genre</List>
+            <List onClick={() => handleMenuClick('bygenre')}>By Genre</List>
             <List>Favorite</List>
         </ControlBox>
     );

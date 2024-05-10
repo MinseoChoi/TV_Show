@@ -7,12 +7,26 @@ const Main = () => {
     const [loading, setLoading] = useState(true);
     const [shows, setShows] = useState([]);
     const [latest, setLatest] = useState([]);
+    const [genreList, setGenreList] = useState([]);
+    const randomGenre = [];
 
     useEffect(() => {
         fetch('https://api.tvmaze.com/shows')
         .then(response => response.json())
         .then(json => {
             setShows(json);
+
+            const genL = [];
+            json.map(show =>
+                show.genres.map(genre =>
+                    genL.push(genre)
+                )    
+            );
+            setGenreList([...new Set(genL)]); // 중복 제거
+
+            for (let i = 0; i < 2; i++) {
+                randomGenre.push(parseInt(Math.random() * [...new Set(genL)].length));
+            }
         });
 
         fetch('https://api.tvmaze.com/schedule/full')
@@ -21,6 +35,8 @@ const Main = () => {
 
         setTimeout(() => setLoading(false), 1500);
     }, []);
+
+    const getRandom = () => parseInt(Math.random() * genreList.length);
 
     const navigate = useNavigate();
     const handleShowClick = (id) => {
@@ -45,14 +61,40 @@ const Main = () => {
                         ))}
                     </ShowCarousel>
                     <hr />
-                    <List>GENRE1 SHOW</List>
+                    <List>{genreList[getRandom()].toUpperCase()}</List>
                     <ShowCarousel>
-                        genre 1 show list ...
+                        {shows
+                            .filter(show => show.genres.includes(genreList[getRandom()]))
+                            .map(result => (
+                                <Show key={result.id} onClick={() => handleShowClick(result.id)}>
+                                    <Image src={result.image?.original} />
+                                    <ShowContent>
+                                        <ShowName>{result.name}</ShowName>
+                                        {result.rating.average && 
+                                            <Detail>⭐ {result.rating.average}점</Detail>
+                                        }
+                                    </ShowContent>
+                                </Show>
+                            ))
+                        }
                     </ShowCarousel>
                     <hr />
-                    <List>GENRE2 SHOW</List>
+                    <List>{genreList[getRandom()].toUpperCase()}</List>
                     <ShowCarousel>
-                        genre 2 show list ...
+                        {shows
+                            .filter(show => show.genres.includes(genreList[getRandom()]))
+                            .map(result => (
+                                <Show key={result.id} onClick={() => handleShowClick(result.id)}>
+                                    <Image src={result.image?.original} />
+                                    <ShowContent>
+                                        <ShowName>{result.name}</ShowName>
+                                        {result.rating.average && 
+                                            <Detail>⭐ {result.rating.average}점</Detail>
+                                        }
+                                    </ShowContent>
+                                </Show>
+                            ))
+                        }
                     </ShowCarousel>
                     <hr />
                     <List>📺 ALL SHOWS</List>
@@ -78,9 +120,9 @@ const Main = () => {
 export default Main;
 
 const MainContainer = styled.div`
-    padding: 0.6rem;
+    margin: 0;   
+    padding: 0.5rem;
     min-height: 100vh;;
-    margin: 0;
     background: linear-gradient(to bottom, #085467, #AFA7BB, #F4C0B3);
     color: white;
 `;
@@ -90,19 +132,18 @@ const ShowContainer = styled.div`
     justify-content: center;
     height: fit-content;
     margin: 0.5rem;
-    padding: 0.6rem;
+    padding: 0.5rem;
     border-radius: 0.5rem;
-
     background-color: rgba(0, 0, 0, 0.5);
 
     hr {
-        margin: 1rem 0 1rem 0;
+        margin: 1rem 0 0.5rem 0;
     }
 `;
 
 const List = styled.p`
     margin: 0;
-    padding: 0.5rem 0.5rem 1rem 0.5rem;
+    padding: 0.5rem;
     font-size: calc(0.6rem + 1vw);
     font-weight: bold;
 `;
@@ -131,14 +172,14 @@ const Image = styled.img`
     @media screen and (min-width: 501px) {
         flex: 0 0 100%;
         width: calc(10rem + 1vw);
-        aspect-ratio: 1 / 1.5;
+        aspect-ratio: 1 / 1.4;
         border-radius: 1rem;
     }
     
     @media screen and (max-width: 500px) {
         align-items: center;
         width: calc(6rem + 1vw);
-        aspect-ratio: 1 / 1.5;
+        aspect-ratio: 1 / 1.4;
         border-radius: 1rem;
     }
 `;
@@ -148,14 +189,14 @@ const ShowContent = styled.div`
         position: absolute;
         bottom: 0;
         padding-bottom: 0.5rem;
-        border-radius: 1rem;
         display: flex;
         flex-flow: column;
-        width: calc(10rem + 1vw);
-        aspect-ratio: 1 / 1.5;
         justify-content: flex-end;
+        width: calc(10rem + 1vw);
+        aspect-ratio: 1 / 1.4;
         background-image: linear-gradient(rgb(0, 0, 0, 0), rgb(0, 0, 0, 1));
         opacity: 0;
+        border-radius: 1rem;
         text-align: center;
 
         &:hover {

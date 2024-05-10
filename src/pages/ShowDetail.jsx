@@ -160,7 +160,7 @@ const Image = styled.img`
         &.poster {
             margin: 1rem 0 0 1rem;
             width: calc(5rem + 18vw);
-            aspect-ratio: 1 / 1.5;
+            aspect-ratio: 1 / 1.4;
             border-radius: 1rem;
 
             &:hover {
@@ -180,7 +180,7 @@ const Image = styled.img`
         &.poster {
             margin: 1rem 1rem 0 1rem;
             width: calc(100% - 2rem);
-            aspect-ratio: 1 / 1.5;
+            aspect-ratio: 1 / 1.4;
             border-radius: 1rem;
         }
 

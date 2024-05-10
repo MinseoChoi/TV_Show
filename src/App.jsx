@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Main from './pages/Main';
 import ShowDetail from './pages/ShowDetail';
 import ShowList from './pages/ShowList';
+import ByGenre from './pages/ByGenre';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/show/:id" element={<ShowDetail />}></Route>
           <Route path="/all" element={<ShowList />}></Route>
           <Route path="/latest" element={<ShowList />}></Route>
+          <Route path="/bygenre" element={<ByGenre />}></Route>
         </Routes>
       </AppContainer>
     </BrowserRouter>
