@@ -8,7 +8,6 @@ const Main = () => {
     const [shows, setShows] = useState([]);
     const [latest, setLatest] = useState([]);
     const [genreList, setGenreList] = useState([]);
-    const randomGenre = [];
 
     useEffect(() => {
         const fetchData = async () => {

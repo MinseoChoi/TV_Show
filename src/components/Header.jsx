@@ -6,7 +6,6 @@ import Sidebar from './Sidebar';
 
 const Header = () => {
     const [menu, setMenu] = useState(false);
-    const [click, setClick] = useState('');
 
     const navigate = useNavigate();
     const handleMainClick = () => {
@@ -16,7 +15,6 @@ const Header = () => {
     const handleMenuClick = (name) => {
         navigate(`${name}`);
         setMenu(false);
-        setClick(`${name}`);
     };
 
     useEffect(() => {
