@@ -6,6 +6,7 @@ import Loader from '../components/Loader';
 const Main = () => {
     const [loading, setLoading] = useState(true);
     const [shows, setShows] = useState([]);
+    const [latest, setLatest] = useState([]);
 
     useEffect(() => {
         fetch('https://api.tvmaze.com/shows')
@@ -13,6 +14,10 @@ const Main = () => {
         .then(json => {
             setShows(json);
         });
+
+        fetch('https://api.tvmaze.com/schedule/full')
+        .then(response => response.json())
+        .then(json => setLatest(json.slice(0, 50)));
 
         setTimeout(() => setLoading(false), 1500);
     }, []);
@@ -30,7 +35,14 @@ const Main = () => {
                 <ShowContainer>
                     <List>✨ LATEST SHOWS</List>
                     <ShowCarousel>
-                        latest show list ...
+                        {latest.map(s => (
+                            <Show key={s.id} onClick={() => handleShowClick(s._embedded.show.id)}>
+                                <Image src={s._embedded.show.image?.original ? s._embedded.show.image?.original : process.env.PUBLIC_URL + '/assets/imageError.svg'} />
+                                <ShowContent>
+                                    <ShowName>{s._embedded.show.name}</ShowName>
+                                </ShowContent>
+                            </Show>
+                        ))}
                     </ShowCarousel>
                     <hr />
                     <List>GENRE1 SHOW</List>

@@ -38,7 +38,7 @@ const Header = () => {
                 />
                 <Menubar>
                     <p onClick={() => handleMenuClick('all')}>All Shows</p>
-                    <p>Latest</p>
+                    <p onClick={() => handleMenuClick('latest')}>Latest</p>
                     <p>By Genre</p>
                     <p>Favorite</p>
                 </Menubar>

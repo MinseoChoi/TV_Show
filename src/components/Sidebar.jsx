@@ -1,12 +1,19 @@
 import styled from 'styled-components';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = ({menu, setMenu}) => {
+    const navigate = useNavigate();
+    const handleMenuClick = (name) => {
+        navigate(`${name}`);
+        setMenu(false);
+    };
+    
     return (
         <ControlBox className={menu ? 'open' : 'close'}>
             <List>Popular</List>
-            <List>All Shows</List>
-            <List>Latest</List>
+            <List onClick={() => handleMenuClick('all')}>All Shows</List>
+            <List onClick={() => handleMenuClick('latest')}>Latest</List>
             <List>By Genre</List>
             <List>Favorite</List>
         </ControlBox>

@@ -14,6 +14,10 @@ const ShowList = () => {
             fetch('https://api.tvmaze.com/shows')
             .then(response => response.json())
             .then(json => setShows(json));
+        } else if (location.pathname === '/latest') {
+            fetch('https://api.tvmaze.com/schedule/full')
+            .then(response => response.json())
+            .then(json => setShows(json));
         }
 
         setTimeout(() => setLoading(false), 1500);

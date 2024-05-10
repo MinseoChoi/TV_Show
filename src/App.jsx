@@ -14,6 +14,7 @@ function App() {
           <Route index element={<Main />}></Route>
           <Route path="/show/:id" element={<ShowDetail />}></Route>
           <Route path="/all" element={<ShowList />}></Route>
+          <Route path="/latest" element={<ShowList />}></Route>
         </Routes>
       </AppContainer>
     </BrowserRouter>
