@@ -28,5 +28,7 @@ function App() {
 export default App;
 
 const AppContainer = styled.div`
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 `;

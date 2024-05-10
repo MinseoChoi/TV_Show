@@ -182,6 +182,4 @@ const ShowContent = styled.div`
 const ShowName = styled.p`
     font-size: calc(0.2rem + 1vw);
     font-weight: bold;
-    margin: 0;
-    padding: 0;
 `;
