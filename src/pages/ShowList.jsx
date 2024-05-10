@@ -171,10 +171,3 @@ const ShowName = styled.p`
     font-size: calc(0.2rem + 1vw);
     font-weight: bold;
 `;
-
-const Detail = styled.span`
-    margin: 0;
-    padding: 0.1rem 0 0.1rem 0;
-    font-size: calc(0.5rem + 0.5vw);
-    color: darkgray;
-`;

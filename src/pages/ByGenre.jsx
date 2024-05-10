@@ -79,7 +79,7 @@ export default ByGenre;
 const MainContainer = styled.div`
     margin: calc(4rem + 0.5vw) 0 0 0;
     padding: 0.5rem;
-    min-heigiht: 100vh;
+    heigiht: 100%;
     background: linear-gradient(to bottom, #085467, #AFA7BB, #F4C0B3);
     color: white;
 `;
