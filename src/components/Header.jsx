@@ -39,10 +39,10 @@ const Header = () => {
                     onClick={handleMainClick}
                 />
                 <Menubar>
-                    <p className={click === 'all' ? 'selected' : ''} onClick={() => handleMenuClick('all')}>All Shows</p>
-                    <p className={click === 'latest' ? 'selected' : ''} onClick={() => handleMenuClick('latest')}>Latest</p>
-                    <p className={click === 'bygenre' ? 'selected' : ''} onClick={() => handleMenuClick('bygenre')}>By Genre</p>
-                    <p>Favorite</p>
+                    <p onClick={() => handleMenuClick('all')}>All Shows</p>
+                    <p onClick={() => handleMenuClick('latest')}>Latest</p>
+                    <p onClick={() => handleMenuClick('bygenre')}>By Genre</p>
+                    <p onClick={() => handleMenuClick('favorite')}>Favorite</p>
                 </Menubar>
             </Navibar>
             <Navibar>
@@ -69,6 +69,8 @@ const AppHeader = styled.header`
     top: 0;
     width: 100%;
     height: calc(4rem + 0.5vw);
+    margin: 0;
+    padding: 0;
     font-size: calc(1rem + 0.5vw);
     z-index: 10000;
 `;
@@ -132,12 +134,6 @@ const Menubar = styled.div`
         text-decoration: overline underline 1px;
 
         transition: all 200ms ease-out;
-    }
-    
-    p {
-        &.selected {
-            font-weight: bold;
-        }
     }
 
     @media screen and (max-width: 500px) {

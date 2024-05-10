@@ -130,7 +130,7 @@ const MainContainer = styled.div`
     position: relative;
     margin: calc(4rem + 0.5vw) 0 0 0;
     padding: 0.5rem;
-    min-height: 100vh;;
+    height: fit-content;
     background: linear-gradient(to bottom, #085467, #AFA7BB, #F4C0B3);
     color: white;
 `;
