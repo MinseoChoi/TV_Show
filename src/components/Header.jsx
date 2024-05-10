@@ -6,6 +6,7 @@ import Sidebar from './Sidebar';
 
 const Header = () => {
     const [menu, setMenu] = useState(false);
+    const [click, setClick] = useState('');
 
     const navigate = useNavigate();
     const handleMainClick = () => {
@@ -15,6 +16,7 @@ const Header = () => {
     const handleMenuClick = (name) => {
         navigate(`${name}`);
         setMenu(false);
+        setClick(`${name}`);
     };
 
     useEffect(() => {
@@ -37,9 +39,9 @@ const Header = () => {
                     onClick={handleMainClick}
                 />
                 <Menubar>
-                    <p onClick={() => handleMenuClick('all')}>All Shows</p>
-                    <p onClick={() => handleMenuClick('latest')}>Latest</p>
-                    <p onClick={() => handleMenuClick('bygenre')}>By Genre</p>
+                    <p className={click === 'all' ? 'selected' : ''} onClick={() => handleMenuClick('all')}>All Shows</p>
+                    <p className={click === 'latest' ? 'selected' : ''} onClick={() => handleMenuClick('latest')}>Latest</p>
+                    <p className={click === 'bygenre' ? 'selected' : ''} onClick={() => handleMenuClick('bygenre')}>By Genre</p>
                     <p>Favorite</p>
                 </Menubar>
             </Navibar>
@@ -130,6 +132,12 @@ const Menubar = styled.div`
         text-decoration: overline underline 1px;
 
         transition: all 200ms ease-out;
+    }
+    
+    p {
+        &.selected {
+            font-weight: bold;
+        }
     }
 
     @media screen and (max-width: 500px) {

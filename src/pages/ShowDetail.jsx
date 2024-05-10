@@ -14,6 +14,9 @@ const ShowDetail = () => {
     const [episodes, setEpisodes] = useState([]);
     const [click, setClick] = useState('');
 
+    const [isExpand, setIsExpand] = useState(false);
+    const [selected, setSelected] = useState(1);
+
     useEffect(() => {
         fetch(`https://api.tvmaze.com/shows/${params.id}`)
         .then(response => response.json())
@@ -37,6 +40,57 @@ const ShowDetail = () => {
     const removeTag = (text) => {
         return text.replace(/(<([^>]+)>)/gi, '');
     };
+
+    const optionList = () => {
+        const list = [];
+
+        for (let i = 1; i <= Object.values(episodes)[episodes.length - 1].season; i++) {
+            list.push(
+                <option key={i} value={i}>
+                    시즌 {i}
+                </option>
+            )
+        }
+
+        return list;
+    };
+
+    const seasonList = () => {
+        const list = [];
+
+        for (let i = 1; i <= Object.values(episodes)[episodes.length - 1].season; i++) {
+            list.push(
+                <li key={i}>
+                    <button
+                        buttonid={i}
+                        type="button"
+                        onClick={() => {
+                            setSelected(i);
+                            setIsExpand(false);
+                        }}
+                        className={selected === i ? "selected" : ""}
+                    >
+                        시즌 {i}
+                    </button>
+                </li>
+            )
+        };
+
+        return list;
+    };
+
+    const handleMouseDown = e => {
+        e.preventDefault();
+
+        if (e.target.matches(':focus')) {
+            setIsExpand(prev => !prev);
+        } else {
+            e.target.focus();
+            setIsExpand(true);
+        }
+
+        return false;
+    }
 
     const toggleSummary = (index) => {
         if (click === index) setClick('');
@@ -62,9 +116,11 @@ const ShowDetail = () => {
                             </GenreGroup>
                             <Detail size='0.5rem + 0.5vw'>
                                 {show.rating.average && 
-                                    <Detail>⭐ {show.rating.average}점</Detail>
+                                    <>
+                                        <Detail>⭐ {show.rating.average}점</Detail>
+                                        <span> / </span>
+                                    </>
                                 }
-                                <span> / </span>
                                 <Detail>평균 {show.averageRuntime}분</Detail>
                             </Detail>
                             {show.summary &&
@@ -88,8 +144,29 @@ const ShowDetail = () => {
                     <hr />
                     {episodes &&
                         <Episodes>
+                            <Season
+                                onBlur={() => setIsExpand(false)}
+                                onMouseDown={(e) => handleMouseDown(e)}
+                            >
+                                <>
+                                    <Arrow className={`${isExpand ? "is-expanded" : ""}`}></Arrow>
+                                    <Select
+                                        name="select"
+                                        value={selected}
+                                        onChange={(e) => setSelected(e.target.value)}
+                                    >
+                                        {optionList()}
+                                    </Select>
+                                </>
+                                {isExpand && (
+                                    <UL>
+                                        {seasonList()}
+                                    </UL>
+                                )}
+                            </Season>
                             <EpisodeWrapper>
                                 {episodes
+                                .filter(episode => episode.season === selected)
                                 .map((episode, index) => (
                                     <Episode key={episode.id}>
                                         <Image src={episode.image?.original ? episode.image?.original : process.env.PUBLIC_URL + '/assets/imageError.svg'} className='episode' />
@@ -99,9 +176,11 @@ const ShowDetail = () => {
                                                 <Detail>시즌 {episode.season} - {episode.number}화</Detail>
                                                 <span> / </span>
                                                 {episode.rating.average &&
-                                                    <Detail>⭐ {episode.rating.average}점</Detail>
+                                                    <>
+                                                        <Detail>⭐ {episode.rating.average}점</Detail>
+                                                        <span> / </span>
+                                                    </>
                                                 }
-                                                <span> / </span>
                                                 <Detail>{episode.runtime}분</Detail>
                                             </Detail>
                                             {episode.summary &&
@@ -385,4 +464,133 @@ const Episode = styled.div`
     flex-direction: row;
     margin: 10px;
     gap: 0.5rem;
+`;
+
+const Season = styled.div`
+    display: block;
+    position: relative;
+    width: calc(6rem + 1vw);
+    margin: 0.5rem 0 0.5rem 1rem;
+    font-size: calc(0.6rem + 0.5vw);
+
+    div {
+        border-radius: 0.5rem;
+        position: relative;
+    }
+`;
+
+const Select = styled.select`
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    -o-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    border-radius: 0;
+    background: none transparent;
+    vertical-align: middle;
+    font-size: inherit;
+    font-weight: bold;
+    color: inherit;
+    box-sizing: content-box;
+    margin: 0;
+    width: 120px;
+    border-radius: 0.5rem;
+    padding: 0.75rem 2.5rem 0.65rem 0.75rem;
+    box-shadow: none;
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    border: 2px solid #ddd;
+    line-height: 1.06;
+`;
+
+const UL = styled.ul`
+    position: absolute;
+    z-index: 99;
+    width: 100%;
+    top: 1rem;
+    margin-top: 1.7rem;
+    border-radius: 0.5rem;
+    border: 2px solid black;
+    padding: 0.5rem 0.5rem;
+    background: white;
+    list-style: none;
+    box-sizing: border-box;
+
+    button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        transition: all 0.3s;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        border: 0;
+        outline: 0;
+        background: none;
+
+        &:hover {
+            background: #eee;
+        }
+
+        &:active {
+            background: #aaa;
+        }
+
+        &.selected {
+            background: #000;
+            color: #fff;
+        }
+    }
+`;
+
+const Arrow = styled.span`
+    width: 20px;
+    height: 20px;
+    background: #000;
+    display: block;
+    position: absolute;
+    right: 0.5rem;
+    top: 10px;
+    border-radius: 0.25rem;
+    pointer-events: none;
+
+    &:before,
+    &:after {
+        content: "";
+        background-color: transparent;
+        width: 2px;
+        height: 12px;
+        background: yellow;
+        border-bottom: 7px solid white;
+        display: block;
+        position: absolute;
+        background: none;
+        box-sizing: border-box;
+        transform: rotate(0);
+        transform-origin: center;
+        top: 2px;
+        left: 9px;
+        transition: all 0.3s;
+    }
+
+    &.is-expanded {
+        &:before,
+        &:after {
+            top: 6px;
+        }
+        &:before {
+            transform: rotate(135deg);
+        }
+        &:after {
+            transform: rotate(-135deg);
+        }
+    }
+
+    &:before {
+        transform: rotate(45deg);
+    }
+
+    &:after {
+        transform: rotate(-45deg);
+    }
 `;
